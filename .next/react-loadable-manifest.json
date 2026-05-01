@@ -1,0 +1,20 @@
+{
+  "pages\\matchaflow.js -> @/components/ui/hover-brand-logo": {
+    "id": "pages\\matchaflow.js -> @/components/ui/hover-brand-logo",
+    "files": [
+      "static/chunks/components_ui_hover-brand-logo_js.js"
+    ]
+  },
+  "pages\\matchaflow.js -> @/components/ui/scroll-morph-hero": {
+    "id": "pages\\matchaflow.js -> @/components/ui/scroll-morph-hero",
+    "files": [
+      "static/chunks/components_ui_scroll-morph-hero_js.js"
+    ]
+  },
+  "pages\\matchaflow.js -> @/components/ui/stacked-cards-interaction": {
+    "id": "pages\\matchaflow.js -> @/components/ui/stacked-cards-interaction",
+    "files": [
+      "static/chunks/components_ui_stacked-cards-interaction_js.js"
+    ]
+  }
+}
