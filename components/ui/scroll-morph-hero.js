@@ -80,7 +80,7 @@ function FlipCard({ src, index, phase, target, imgW, imgH }) {
 
 const TOTAL_IMAGES = 20
 const MAX_SCROLL_DESKTOP = 1800
-const MAX_SCROLL_MOBILE = 1200
+const MAX_SCROLL_MOBILE = 400
 
 const IMAGES = [
   "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400&q=85",
@@ -146,6 +146,9 @@ export default function IntroAnimation() {
     const currentMaxScroll = (containerSize.width || 800) < 768
       ? MAX_SCROLL_MOBILE
       : MAX_SCROLL_DESKTOP
+    const currentEarlyUnlock = (containerSize.width || 800) < 768
+      ? MAX_SCROLL_MOBILE * 0.6
+      : MAX_SCROLL_DESKTOP * 0.8
 
     const handleWindowScroll = () => {
       if (!lockRef.current && scrollRef.current > 0) {
@@ -173,12 +176,13 @@ export default function IntroAnimation() {
       scrollRef.current = newScroll
       virtualScroll.set(newScroll)
 
-      if (newScroll >= currentMaxScroll - 10) {
+      if (newScroll >= currentEarlyUnlock) {
         lockRef.current = false
       }
     }
 
     let touchStartY = 0
+    let totalTouchDistance = 0
     const handleTouchStart = (e) => {
       if (!lockRef.current) {
         const rect = container.getBoundingClientRect()
@@ -188,6 +192,7 @@ export default function IntroAnimation() {
       }
       if (!lockRef.current) return
       touchStartY = e.touches[0].clientY
+      totalTouchDistance = 0
     }
     const handleTouchMove = (e) => {
       if (!lockRef.current) return
@@ -195,34 +200,47 @@ export default function IntroAnimation() {
       const touchY = e.touches[0].clientY
       const deltaY = touchStartY - touchY
       touchStartY = touchY
+      totalTouchDistance += Math.abs(deltaY)
       const newScroll = Math.min(Math.max(scrollRef.current + deltaY, 0), currentMaxScroll)
       scrollRef.current = newScroll
       virtualScroll.set(newScroll)
-      if (newScroll >= currentMaxScroll - 10) {
+      if (newScroll >= currentEarlyUnlock) {
         lockRef.current = false
       }
+    }
+    const handleTouchEnd = () => {
+      const isMobile = (containerSize.width || 800) < 768
+      if (isMobile && totalTouchDistance > 150) {
+        lockRef.current = false
+      }
+      totalTouchDistance = 0
     }
 
     container.addEventListener("wheel", handleWheel, { passive: false })
     container.addEventListener("touchstart", handleTouchStart, { passive: false })
     container.addEventListener("touchmove", handleTouchMove, { passive: false })
+    container.addEventListener("touchend", handleTouchEnd, { passive: true })
     window.addEventListener("scroll", handleWindowScroll, { passive: true })
 
     return () => {
       container.removeEventListener("wheel", handleWheel)
       container.removeEventListener("touchstart", handleTouchStart)
       container.removeEventListener("touchmove", handleTouchMove)
+      container.removeEventListener("touchend", handleTouchEnd)
       window.removeEventListener("scroll", handleWindowScroll)
     }
   }, [virtualScroll, containerSize.width])
 
-  const morphRange = isMobile ? [0, 400] : [0, 600]
+  const morphRange = isMobile ? [0, 150] : [0, 600]
   const morphProgress = useTransform(virtualScroll, morphRange, [0, 1])
   const smoothMorph = useSpring(morphProgress, { stiffness: 80, damping: 26, mass: 0.6 })
 
-  const rotateRange = isMobile ? [400, MAX_SCROLL_MOBILE] : [600, MAX_SCROLL_DESKTOP]
+  const rotateRange = isMobile ? [150, MAX_SCROLL_MOBILE] : [600, MAX_SCROLL_DESKTOP]
   const scrollRotate = useTransform(virtualScroll, rotateRange, [0, 360])
   const smoothScrollRotate = useSpring(scrollRotate, { stiffness: 80, damping: 26, mass: 0.6 })
+
+  // Early unlock threshold for mobile
+  const earlyUnlockThreshold = isMobile ? MAX_SCROLL_MOBILE * 0.6 : MAX_SCROLL_DESKTOP * 0.8
 
   const [introPhase, setIntroPhase] = useState("scatter")
 
