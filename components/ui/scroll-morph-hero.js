@@ -147,7 +147,7 @@ export default function IntroAnimation() {
       ? MAX_SCROLL_MOBILE
       : MAX_SCROLL_DESKTOP
     const currentEarlyUnlock = (containerSize.width || 800) < 768
-      ? MAX_SCROLL_MOBILE * 0.3
+      ? MAX_SCROLL_MOBILE * 0.15
       : MAX_SCROLL_DESKTOP * 0.8
 
     const handleWindowScroll = () => {
@@ -160,15 +160,7 @@ export default function IntroAnimation() {
     }
 
     const handleWheel = (e) => {
-      if (!lockRef.current) {
-        if (e.deltaY < 0 && scrollRef.current > 0) {
-          const rect = container.getBoundingClientRect()
-          if (rect.top >= -10 && rect.top <= 10) {
-            lockRef.current = true
-          }
-        }
-        if (!lockRef.current) return
-      }
+      if (!lockRef.current) return
 
       e.preventDefault()
       const delta = Math.abs(e.deltaY) < 50 ? e.deltaY * 2.5 : e.deltaY
@@ -182,17 +174,9 @@ export default function IntroAnimation() {
     }
 
     let touchStartY = 0
-    let totalTouchDistance = 0
     const handleTouchStart = (e) => {
-      if (!lockRef.current) {
-        const rect = container.getBoundingClientRect()
-        if (rect.top >= -10 && rect.top <= 10 && scrollRef.current > 0) {
-          lockRef.current = true
-        }
-      }
       if (!lockRef.current) return
       touchStartY = e.touches[0].clientY
-      totalTouchDistance = 0
     }
     const handleTouchMove = (e) => {
       if (!lockRef.current) return
@@ -200,7 +184,6 @@ export default function IntroAnimation() {
       const touchY = e.touches[0].clientY
       const deltaY = touchStartY - touchY
       touchStartY = touchY
-      totalTouchDistance += Math.abs(deltaY)
       const newScroll = Math.min(Math.max(scrollRef.current + deltaY, 0), currentMaxScroll)
       scrollRef.current = newScroll
       virtualScroll.set(newScroll)
@@ -208,25 +191,16 @@ export default function IntroAnimation() {
         lockRef.current = false
       }
     }
-    const handleTouchEnd = () => {
-      const isMobile = (containerSize.width || 800) < 768
-      if (isMobile && (totalTouchDistance > 80 || scrollRef.current >= currentEarlyUnlock)) {
-        lockRef.current = false
-      }
-      totalTouchDistance = 0
-    }
 
     container.addEventListener("wheel", handleWheel, { passive: false })
     container.addEventListener("touchstart", handleTouchStart, { passive: false })
     container.addEventListener("touchmove", handleTouchMove, { passive: false })
-    container.addEventListener("touchend", handleTouchEnd, { passive: true })
     window.addEventListener("scroll", handleWindowScroll, { passive: true })
 
     return () => {
       container.removeEventListener("wheel", handleWheel)
       container.removeEventListener("touchstart", handleTouchStart)
       container.removeEventListener("touchmove", handleTouchMove)
-      container.removeEventListener("touchend", handleTouchEnd)
       window.removeEventListener("scroll", handleWindowScroll)
     }
   }, [virtualScroll, containerSize.width])
@@ -240,7 +214,7 @@ export default function IntroAnimation() {
   const smoothScrollRotate = useSpring(scrollRotate, { stiffness: 80, damping: 26, mass: 0.6 })
 
   // Early unlock threshold for mobile
-  const earlyUnlockThreshold = isMobile ? MAX_SCROLL_MOBILE * 0.3 : MAX_SCROLL_DESKTOP * 0.8
+  const earlyUnlockThreshold = isMobile ? MAX_SCROLL_MOBILE * 0.15 : MAX_SCROLL_DESKTOP * 0.8
 
   const [introPhase, setIntroPhase] = useState("scatter")
 
