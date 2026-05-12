@@ -147,7 +147,7 @@ export default function IntroAnimation() {
       ? MAX_SCROLL_MOBILE
       : MAX_SCROLL_DESKTOP
     const currentEarlyUnlock = (containerSize.width || 800) < 768
-      ? MAX_SCROLL_MOBILE * 0.6
+      ? MAX_SCROLL_MOBILE * 0.3
       : MAX_SCROLL_DESKTOP * 0.8
 
     const handleWindowScroll = () => {
@@ -210,7 +210,7 @@ export default function IntroAnimation() {
     }
     const handleTouchEnd = () => {
       const isMobile = (containerSize.width || 800) < 768
-      if (isMobile && totalTouchDistance > 150) {
+      if (isMobile && (totalTouchDistance > 80 || scrollRef.current >= currentEarlyUnlock)) {
         lockRef.current = false
       }
       totalTouchDistance = 0
@@ -240,7 +240,7 @@ export default function IntroAnimation() {
   const smoothScrollRotate = useSpring(scrollRotate, { stiffness: 80, damping: 26, mass: 0.6 })
 
   // Early unlock threshold for mobile
-  const earlyUnlockThreshold = isMobile ? MAX_SCROLL_MOBILE * 0.6 : MAX_SCROLL_DESKTOP * 0.8
+  const earlyUnlockThreshold = isMobile ? MAX_SCROLL_MOBILE * 0.3 : MAX_SCROLL_DESKTOP * 0.8
 
   const [introPhase, setIntroPhase] = useState("scatter")
 
