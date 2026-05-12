@@ -143,12 +143,12 @@ export default function IntroAnimation() {
     const container = containerRef.current
     if (!container) return
 
-    const currentMaxScroll = (containerSize.width || 800) < 768
-      ? MAX_SCROLL_MOBILE
-      : MAX_SCROLL_DESKTOP
-    const currentEarlyUnlock = (containerSize.width || 800) < 768
-      ? MAX_SCROLL_MOBILE * 0.15
-      : MAX_SCROLL_DESKTOP * 0.8
+    const isMobile = (containerSize.width || 800) < 768
+    const currentMaxScroll = isMobile ? MAX_SCROLL_MOBILE : MAX_SCROLL_DESKTOP
+
+    // Animation completes at morph range end (150px mobile, 600px desktop)
+    // Unlock after animation is fully complete
+    const currentEarlyUnlock = isMobile ? 380 : 1750
 
     const handleWindowScroll = () => {
       if (!lockRef.current && scrollRef.current > 0) {
@@ -214,7 +214,7 @@ export default function IntroAnimation() {
   const smoothScrollRotate = useSpring(scrollRotate, { stiffness: 80, damping: 26, mass: 0.6 })
 
   // Early unlock threshold for mobile
-  const earlyUnlockThreshold = isMobile ? MAX_SCROLL_MOBILE * 0.15 : MAX_SCROLL_DESKTOP * 0.8
+  const earlyUnlockThreshold = isMobile ? 380 : 1750
 
   const [introPhase, setIntroPhase] = useState("scatter")
 
