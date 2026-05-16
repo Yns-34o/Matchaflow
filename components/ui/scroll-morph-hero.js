@@ -98,7 +98,7 @@ const IMAGES = [
   "https://images.unsplash.com/photo-1605729988263-7752475299e5?w=400&q=85",
   "https://images.unsplash.com/photo-1708573106073-e27e43ec7fda?w=400&q=85",
   "https://images.unsplash.com/photo-1556881286-fc6915169721?w=400&q=85",
-  "https://iswari.s3.eu-west-3.amazonaws.com/blog/wxzaur-.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Matcha_Scoop.jpg/1280px-Matcha_Scoop.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail",
   "https://images.unsplash.com/photo-1517256064527-8f67e42c22b7?w=400&q=85",
   "https://images.unsplash.com/photo-1587734195503-904fca47e0e9?w=400&q=85",
   "https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=400&q=85",
